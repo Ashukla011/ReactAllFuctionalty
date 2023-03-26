@@ -1,0 +1,11 @@
+.product-1{
+   border:2px solid grey;
+   text-align:center;
+}
+.product-2{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    justify-content:space-around;
+    gap:20px;
+    margin-top:50px;
+}

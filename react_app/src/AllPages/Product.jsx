@@ -1,29 +1,33 @@
 import React, { useState } from 'react'
-// import { FilterData } from '../components/FilterData'
+
+import '../styles/Product.css'
 import {ProductCompo} from'../components/ProductCompo'
+
+let fetchproduct= async(page=1)=>{
+ return  fetch(`https://fakestoreapi.com/products?`)
+}
+   
 export const Product = () => {
   let [data,setData]=useState([])
-   let [filterproduct,setfilterproduct]=useState(data)
+   let [filterproduct,setfilterproduct]=useState([])
    let [search,setSearch]=useState('')
-  let fetchproduct= async()=>{
-    
-        fetch(`https://fakestoreapi.com/products`)
-        .then((res)=>res.json())
-        .then((res)=>{
-          console.log(res)
-          setData(res)
-        })
-    
-  }
-
+   let [Loading,setLoading]=useState(false)
+  
+console.log('filterbefor',filterproduct)
   React.useEffect(()=>{
     fetchproduct()
+    .then((res)=>res.json())
+    .then((res)=>{
+      setLoading(true)
+      setData(res)
+      setfilterproduct(res)
+      setLoading(false)
+    })
   },[])
 
+ 
+   let handleFilter=(val)=>{
 
-   let handleFilter=(e)=>{
-    
-    let val= e.target.value;
     if(val==="All"){
         setfilterproduct(data)
     }
@@ -32,18 +36,21 @@ export const Product = () => {
         return val===el.category
       })
       setfilterproduct(valfilter)
-      console.log("filter",valfilter)
+      console.log("filterafter",valfilter)
     }
    }
-console.log('filterbefor',filterproduct)
 
-const handlesearch=()=>{
 
-}
+  
+    if(Loading){
+      <h1>Loading------</h1>
+    }
+
+
   return (
 
     <div>
-     <select name="" id="" onChange={(e)=>handleFilter(e)}>
+     <select  onChange={(e)=>handleFilter(e.target.value)} >
             <option value="All">All</option>
             <option value="men's clothing">men's clothing</option>
             <option value="electronics">electronics</option>
@@ -57,23 +64,26 @@ const handlesearch=()=>{
        </div>
 
        <br/>
-    <div style={{display:'grid',gridTemplateColumns:"repeat(3,1fr)",justifyContent:"space-around",gap:'20px',marginTop:'50px'}}>
-      {data.filter((val)=>{
-        if(search===""){
-          return val
-        }else if(val.title.toLowerCase().includes(search.toLowerCase())){
-          return val
-        }
-      }) .map((el)=>(
-        <ProductCompo
-        key={el.id}
-        title={el.title}
-        price={el.price}
-        category={el.category}
-        rate={el.rating.rate}
-        />
-      ))}
-    </div>
+         
+        <div className='product-2'>
+        {filterproduct.filter((val)=>{
+          if(search==="All"){
+            return val
+          }else if(val.title.toLowerCase().includes(search.toLowerCase())){
+            return val
+          }
+        })
+        .map((el)=>( 
+          <ProductCompo
+          key={el.id}
+          title={el.title}
+          price={el.price}
+          category={el.category}
+          rate={el.rating.rate}
+          />
+        ))}
+      </div>
+     
     </div>
   )
 }
